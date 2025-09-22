@@ -1,0 +1,2 @@
+# Agro-Kalkulator
+Kalkulator kosztów 
