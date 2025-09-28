@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { History, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -12,7 +12,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "./ui/sheet";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { HistoryDialog } from "./cost-calculator";
 import { HistoryIcon } from "./icons";
 
@@ -44,7 +44,6 @@ export function Header() {
                   <button
                     className="flex items-center text-lg font-medium hover:text-primary transition-colors"
                   >
-                  <HistoryIcon className="mr-2 h-5 w-5" />
                   Historia Obliczeń
                 </button>
               } />
