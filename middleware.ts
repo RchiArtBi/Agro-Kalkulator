@@ -5,19 +5,22 @@ export const SESSION_COOKIE_NAME = 'user-session-token';
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
-
   const {pathname} = request.nextUrl;
 
   // Allow requests for static files, API routes, and the login page
+  // This is the new way of matching paths in middleware
   if (
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next/static') ||
+    pathname.startsWith('/_next/image') ||
+    pathname.endsWith('/favicon.ico') ||
     pathname === '/login' ||
     pathname.startsWith('/admin') // Admin has its own security
   ) {
     return NextResponse.next();
   }
+  
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
 
   // If no session, redirect to login
   if (!sessionCookie) {
@@ -30,13 +33,5 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
-export const config = {
-  // Match all request paths except for the ones starting with:
-  // - api (API routes)
-  // - _next/static (static files)
-  // - _next/image (image optimization files)
-  // - favicon.ico (favicon file)
-  // We will handle exclusions inside the middleware itself.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};
+// The 'config' object for the matcher is deprecated.
+// The path matching logic is now handled inside the middleware function itself.

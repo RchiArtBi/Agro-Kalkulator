@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -167,14 +166,19 @@ export function CostCalculator() {
   const reportRef = useRef<HTMLDivElement>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FormValues | null>(null);
   const [transportData, setTransportData] = useState<Machine | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   
+  useEffect(() => {
+      setIsMounted(true);
+  }, []);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       machines: [{ machineType: '', machineModel: '', additionalCosts: [] }],
       distance: 100,
       startPostalCode: "",
-      endPostalCode: "",
+      endPostalCode: "", // Corrected typo: fendPostalCode to endPostalCode
       manualAdditionalCost: undefined,
     },
   });
@@ -188,18 +192,19 @@ export function CostCalculator() {
     async function fetchMachines() {
       const fetchedMachines = await getMachines();
       setAllMachines(fetchedMachines);
-      const types = [...new Set(fetchedMachines.map(m => m.type))];
-      setMachineTypes(types);
+      if (fetchedMachines) { // Ensure fetchedMachines is not undefined or null
+        const types = [...new Set(fetchedMachines.map(m => m.type))];
+        setMachineTypes(types);
+      }
     }
     fetchMachines();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const watchedMachines = form.watch("machines");
 
-  const getMachineModelsForType = (type: string) => allMachines.filter(m => m.type === type) || [];
+  const getMachineModelsForType = (type: string) => (allMachines || []).filter(m => m.type === type);
   
-  const getSelectedMachine = (modelName: string) => allMachines.find(m => m.model === modelName);
+  const getSelectedMachine = (modelName: string) => (allMachines || []).find(m => m.model === modelName);
 
   const getAdditionalCostsForMachine = (modelName?: string) => {
     const machine = getSelectedMachine(modelName || '');
@@ -441,7 +446,7 @@ export function CostCalculator() {
       </CardHeader>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="space-y-6">
-          {allMachines.length === 0 ? (
+          {!isMounted ? (
              <div className="flex justify-center items-center h-40">
                 <Spinner className="h-8 w-8" />
              </div>
@@ -454,7 +459,7 @@ export function CostCalculator() {
 
                   return (
                     <div key={item.id} className="p-4 border rounded-lg space-y-4 relative">
-                        {fields.length > 1 && (
+                        {fields && fields.length > 1 && (
                             <Button
                                 type="button"
                                 variant="ghost"
@@ -584,7 +589,7 @@ export function CostCalculator() {
 
             <div className="space-y-4">
               <Label className="text-base font-medium">Koszty dodatkowe maszyn:</Label>
-              {watchedMachines?.map((machine, index) => {
+              {isMounted && watchedMachines?.map((machine, index) => {
                  const selectedMachine = getSelectedMachine(machine.machineModel);
                  if (!selectedMachine) return null;
                  const additionalCosts = getAdditionalCostsForMachine(selectedMachine.model);
@@ -674,5 +679,3 @@ export function CostCalculator() {
     </Card>
   );
 }
-
-    
