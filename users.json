@@ -1,0 +1,22 @@
+[
+  {
+    "login": "admin",
+    "hash": "admin321!"
+  },
+  {
+    "login": "artur.bielenica@contractus.com.pl",
+    "hash": "admin"
+  },
+  {
+    "login": "slawek.koc@contractus.com.pl",
+    "hash": "slawek321!"
+  },
+  {
+    "login": "grzegorz.trojan@contractus.com.pl",
+    "hash": "grzesiek321!"
+  },
+  {
+    "login": "wojciech.zacharewicz@contractus.com.pl",
+    "hash": "wojtek321!"
+  }
+]
